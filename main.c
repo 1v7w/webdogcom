@@ -9,9 +9,12 @@
 #include "daemond.h"
 #include "logging.h"
 
+#define VERSION "0.0.3"
+
 int interval_time = 1;
 
 int is_positive_integer(const char *str);
+void print_help(int exval);
 
 int main(int argc, char *argv[]) {
     char msg[128];
@@ -19,11 +22,12 @@ int main(int argc, char *argv[]) {
     struct option long_options[] = {
             {"interval", required_argument, NULL, 'i'},
             {"daemon", no_argument, NULL, 'd'},
+            {"help", no_argument, 0, 'h'},
             {NULL, 0, NULL, 0}
     };
 
     int opt;
-    while ((opt = getopt_long(argc, argv, "i:d", long_options, NULL)) != -1) {
+    while ((opt = getopt_long(argc, argv, "i:dh", long_options, NULL)) != -1) {
         switch (opt) {
             case 'i':
                 if(!is_positive_integer(optarg)) {
@@ -35,6 +39,12 @@ int main(int argc, char *argv[]) {
                 break;
             case 'd':
                 daemon_flag = 1;
+                break;
+            case 'h':
+                print_help(0);
+                break;
+            case '?':
+                print_help(1);
                 break;
             default:
                 break;
@@ -91,4 +101,18 @@ int is_positive_integer(const char *str) {
     }
 
     return 1;
+}
+
+void print_help(int exval) {
+    printf("\nImplementation of Dr.com in web authentication.\n");
+    printf("Version: %s\n\n", VERSION);
+
+    printf("Usage:\n");
+    printf("\twebdogcom [options <argument>]...\n\n");
+
+    printf("Options:\n");
+    printf("\t--interval <m>, -i <m>                authentication per m(int) minutes\n");
+    printf("\t--daemon, -d                          set daemon flag\n");
+    printf("\t--help, -h                            display this help\n\n");
+    exit(exval);
 }
