@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 struct Config {
     // 定义变量来存储IP地址和用户名
@@ -16,5 +17,6 @@ struct Config {
 };
 
 struct Config *get_config();
+
 
 #endif //WEBDOGCOM_CONFIG_H

@@ -1,6 +1,6 @@
 #include "login.h"
 
-const char *ret_msg[] = {"All ok.\n", "Password error or other error.\n", "Auth has been successful.\n", "Other error.\n"};
+const char *ret_msg[] = {"All ok.", "Password error or other error.", "Auth has been successful.", "Other error."};
 
 /*
  * 登录认证
@@ -92,6 +92,11 @@ enum RET_CODE login(const char *server, const char *port, const char *user_accou
     return ERROR;
 }
 
+/*
+ * 返回RET_CODE对应的说明
+ * @param ret_code
+ * @return
+ */
 const char *convert_ret_code(enum RET_CODE ret_code) {
     return ret_msg[ret_code];
 }

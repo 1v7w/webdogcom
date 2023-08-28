@@ -1,5 +1,10 @@
 #include "get_result.h"
 
+/*
+ * 获取str中的"result":"值"
+ * @param str
+ * @return 成功返回值，否则返回NULL
+ */
 char *get_result(char *str) {
     // 搜索 "result":" 字符串
     char *start = strstr(str, "\"result\":\"");
@@ -17,6 +22,11 @@ char *get_result(char *str) {
     return NULL;
 }
 
+/*
+ * 获取str中的"ret_code":"值"
+ * @param str
+ * @return 成功返回值，否则返回NULL
+ */
 char *get_ret_code(char *str) {
     // 搜索 "ret_code":" 字符串
     char *start = strstr(str, "\"ret_code\":\"");
