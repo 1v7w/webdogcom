@@ -1,5 +1,7 @@
 #include "login.h"
 
+const char *ret_msg[] = {"All ok.\n", "Password error or other error.\n", "Auth has been successful.\n", "Other error.\n"};
+
 /*
  * 登录认证
  * @param server 认证服务器地址
@@ -8,9 +10,9 @@
  * @param user_password 校园网密码
  * @param ip 主机校园网ip
  * @param wlan_ac_name 连接的AC名字,可NULL
- * @return 成功请求返回1，失败返回0。具体认证信息看输出。
+ * @return 成功认证返回OK, 密码错误返回PASSWORD_ERROR, 已经认证过返回INUSE, 其他错误返回ERROR
  * */
-int login(const char *server, const char *port, const char *user_account, const char *user_password, const char *ip, const char *wlan_ac_name) {
+enum RET_CODE login(const char *server, const char *port, const char *user_account, const char *user_password, const char *ip, const char *wlan_ac_name) {
     if(wlan_ac_name == NULL) {
         wlan_ac_name = "";
     }
@@ -31,7 +33,7 @@ int login(const char *server, const char *port, const char *user_account, const 
     int sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd == -1) {
         perror("socket");
-        return 1;
+        return ERROR;
     }
 
     // 解析主机名
@@ -39,7 +41,7 @@ int login(const char *server, const char *port, const char *user_account, const 
     if (server_info == NULL) {
         perror("gethostbyname");
         close(sockfd);
-        return 1;
+        return ERROR;
     }
 
     // 设置服务器地址结构
@@ -53,20 +55,20 @@ int login(const char *server, const char *port, const char *user_account, const 
     if (connect(sockfd, (struct sockaddr *)&server_addr, sizeof(server_addr)) == -1) {
         perror("connect");
         close(sockfd);
-        return 1;
+        return ERROR;
     }
 
     // 发送HTTP请求
     if (write(sockfd, request, strlen(request)) == -1) {
         perror("write");
         close(sockfd);
-        return 1;
+        return ERROR;
     }
 
     // 接收并打印服务器响应
     char response[4096];
     ssize_t bytes_received;
-    while ((bytes_received = read(sockfd, response, sizeof(response) - 1)) > 0) {
+    if ((bytes_received = read(sockfd, response, sizeof(response) - 1)) > 0) {
         response[bytes_received] = '\0';
         printf("%s", response);
     }
@@ -74,5 +76,22 @@ int login(const char *server, const char *port, const char *user_account, const 
     // 关闭套接字
     close(sockfd);
 
-    return 0;
+    char *result = get_result(response);
+    if(!strcasecmp(result, "1") || !strcasecmp(result, "ok")) {
+        return OK;
+    }
+
+    char *ret_code = get_ret_code(response);
+    if(!strcasecmp(ret_code, "1")) {
+        return PASSWORD_ERROR;
+    }
+    if(!strcasecmp(ret_code, "2")) {
+        return INUSE;
+    }
+
+    return ERROR;
+}
+
+const char *convert_ret_code(enum RET_CODE ret_code) {
+    return ret_msg[ret_code];
 }

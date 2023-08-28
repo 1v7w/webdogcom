@@ -16,6 +16,6 @@ int main(int argc, char *argv[]) {
 
     int ret = login(config->server, config->port, config->user_account, config->user_password,
                     inner_ip, config->wlan_ac_name);
-    printf("ret: %d\n", ret);
+    printf("ret: %s\n", convert_ret_code(ret));
     return 0;
 }
