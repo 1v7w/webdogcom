@@ -1,5 +1,7 @@
 .idea
 
 *.o
+*.swp
 
 webdogcom
+webdogcom.conf
