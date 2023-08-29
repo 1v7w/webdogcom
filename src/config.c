@@ -1,5 +1,5 @@
-#include "config.h"
-#include "logging.h"
+#include "include/config.h"
+#include "include/logging.h"
 
 /*
  * 打印读取到的信息
@@ -73,10 +73,9 @@ struct Config *get_config() {
     }
 
     if (fscanf(file, "wlan_ac_name = '%32[^']'\n", config->wlan_ac_name) != 1) {
-        fprintf(stderr, "Error reading wlan_ac_name from file\n");
-        logging("Error reading wlan_ac_name from file");
-        fclose(file);
-        return NULL;
+        bzero(config->wlan_ac_name, sizeof(config->wlan_ac_name));
+        puts("WLAN_AC_NAME is empty.");
+        logging("WLAN_AC_NAME is empty.");
     }
 
     // 关闭文件

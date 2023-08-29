@@ -1,6 +1,6 @@
-#include "login.h"
+#include "include/login.h"
 
-const char *ret_msg[] = {"All ok.", "Password error or other error.", "Auth has been successful.", "Other error."};
+const char *ret_msg[] = {"All ok.", "Password error or other error.", "Auth has been successful.", "Need to configure wlan_ac_name.", "Other error."};
 
 /*
  * 登录认证
@@ -87,6 +87,9 @@ enum RET_CODE login(const char *server, const char *port, const char *user_accou
     }
     if(!strcasecmp(ret_code, "2")) {
         return INUSE;
+    }
+    if(!strcasecmp(ret_code, "8")) {
+        return NO_AC_NAME;
     }
 
     return ERROR;

@@ -3,15 +3,15 @@
 #include <unistd.h>
 #include <getopt.h>
 
-#include "school_ip.h"
-#include "login.h"
-#include "config.h"
-#include "daemond.h"
-#include "logging.h"
+#include "include/school_ip.h"
+#include "include/login.h"
+#include "include/config.h"
+#include "include/daemond.h"
+#include "include/logging.h"
 
-#define VERSION "0.0.3"
+#define VERSION "0.0.4"
 
-int interval_time = 1;
+int interval_time = 60;
 
 int is_positive_integer(const char *str);
 void print_help(int exval);
@@ -81,7 +81,7 @@ int main(int argc, char *argv[]) {
         puts(msg);
         logging(msg);
 
-        sleep(interval_time * 10);
+        sleep(interval_time);
     }
     return 0;
 }
@@ -111,7 +111,7 @@ void print_help(int exval) {
     printf("\twebdogcom [options <argument>]...\n\n");
 
     printf("Options:\n");
-    printf("\t--interval <m>, -i <m>                authentication per m(int) minutes\n");
+    printf("\t--interval <m>, -i <m>                authentication per m(int) seconds\n");
     printf("\t--daemon, -d                          set daemon flag\n");
     printf("\t--help, -h                            display this help\n\n");
     exit(exval);

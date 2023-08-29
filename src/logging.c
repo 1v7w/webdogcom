@@ -1,4 +1,4 @@
-#include "logging.h"
+#include "include/logging.h"
 
 #define LOG_MAX_SIZE 1024 * 1024 // 1 MB
 

@@ -1,7 +1,7 @@
 // copy from dogcom https://github.com/mchome/dogcom
 
-#include "daemond.h"
-#include "logging.h"
+#include "include/daemond.h"
+#include "include/logging.h"
 
 int daemon_flag = 0;
 int pid_file_handle;

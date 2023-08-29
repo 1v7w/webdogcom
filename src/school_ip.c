@@ -6,7 +6,7 @@
  * @return 返回1表示ip属于该网段
  * */
 
-#include "school_ip.h"
+#include "include/school_ip.h"
 
 int check_network(char ip_str[], char subnet_str[], char netmask_str[]) {
     // 将IP地址和子网掩码转换为网络字节序
