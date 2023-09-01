@@ -10,6 +10,7 @@ Usage:
 
 Options:
         --interval <m>, -i <m>                authentication per m(int) seconds
+        --conf <filepath>, -c <filepath>      import configuration file, default /etc/webdogcom.conf
         --daemon, -d                          set daemon flag
         --help, -h                            display this help
 ```

@@ -17,7 +17,7 @@ struct Config {
     char wlan_ac_name[32];      // 最多31位ac名字 + 终止符
 };
 
-struct Config *get_config();
+struct Config *get_config(char *filepath);
 
 
 #endif //WEBDOGCOM_CONFIG_H

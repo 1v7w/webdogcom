@@ -18,10 +18,10 @@ void print_config(struct Config *config) {
  * 获取文件中的登录配置
  * @return 成功返回配置结构体，否则返回NULL
  */
-struct Config *get_config() {
+struct Config *get_config(char *filepath) {
     struct Config *config = (struct Config *) malloc(sizeof(struct Config));
     // 打开文件以读取信息
-    FILE *file = fopen("webdogcom.conf", "r");
+    FILE *file = fopen(filepath, "r");
 
     // 检查文件是否成功打开
     if (file == NULL) {
