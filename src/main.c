@@ -67,10 +67,12 @@ int main(int argc, char *argv[]) {
     }
     char *inner_ip = get_school_ip(config->network_segment, config->subnet_mask);
     if(inner_ip == NULL) {
-        fprintf(stderr, "network_segment:%s\n"
+        sprintf(msg, "network_segment:%s\n"
                         "subnet_mask:%s\n"
-                        "cannot find target ip!\n",
+                        "cannot find target ip!",
                 config->network_segment, config->subnet_mask);
+        fprintf(stderr, "%s\n", msg);
+        logging(msg);
         exit(1);
     }
 
