@@ -13,21 +13,20 @@ const char *ret_msg[] = {"All ok.", "Password error or other error.", "Auth has 
  * @return 成功认证返回OK, 密码错误返回PASSWORD_ERROR, 已经认证过返回INUSE, 其他错误返回ERROR
  * */
 enum RET_CODE login(const char *server, const char *port, const char *user_account, const char *user_password, const char *ip, const char *wlan_ac_name) {
-    if(wlan_ac_name == NULL) {
-        wlan_ac_name = "";
-    }
-
     // 构建URL
+    // 将time_t统一转为%lld
+    long long int time_0 = time(NULL);
+    long long int time_1 = time(NULL);
     char request[4096];
     snprintf(request, sizeof(request),
-             "GET /eportal/?c=Portal&a=login&callback=dr%ld&login_method=1&user_account=%s&user_password=%s&wlan_user_ip=%s&wlan_user_mac=000000000000&wlan_ac_ip=&wlan_ac_name=%s&jsVersion=3.0&_=%ld HTTP/1.1\r\n"
+             "GET /eportal/?c=Portal&a=login&callback=dr%lld&login_method=1&user_account=%s&user_password=%s&wlan_user_ip=%s&wlan_user_mac=000000000000&wlan_ac_ip=&wlan_ac_name=%s&jsVersion=3.0&_=%lld HTTP/1.1\r\n"
                        "Host: %s:%s\r\n"
                        "Connection: keep-alive\r\n"
                        "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36 Edg/89.0.774.57\r\n"
                        "Accept: */*\r\n"
                        "Referer: http://%s/\r\n"
                        "Accept-Language: zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6\r\n\r\n",
-             (int64_t)time(NULL), user_account, user_password, ip, wlan_ac_name, (int64_t)time(NULL), server, port, server);
+             time_1, user_account, user_password, ip, wlan_ac_name, time_0, server, port, server);
 
     // 创建套接字
     int sockfd = socket(AF_INET, SOCK_STREAM, 0);

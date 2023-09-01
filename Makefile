@@ -1,4 +1,8 @@
 CONFIG = webdogcom.conf
+TOPDIR = $(CURDIR)
+TARGET = webdogcom
+
+export TOPDIR
 
 all: $(CONFIG)
 	$(MAKE) -C src

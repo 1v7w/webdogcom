@@ -31,8 +31,8 @@ int main(int argc, char *argv[]) {
         switch (opt) {
             case 'i':
                 if(!is_positive_integer(optarg)) {
-                    printf("Interval must be a positive integer, using the default value of 1.\n");
-                    logging("Interval must be a positive integer, using the default value of 1.");
+                    printf("Interval must be a positive integer, using the default value of 60.\n");
+                    logging("Interval must be a positive integer, using the default value of 60.");
                     break;
                 }
                 interval_time = atoi(optarg);

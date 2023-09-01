@@ -12,12 +12,10 @@ endif
 CFLAGS += $(INCLUDE_DIR)
 
 $(TARGET): $(OBJS)
-	$(CC) $(OBJS) $(CFLAGS) -o ../$(TARGET)
+	$(CC) $(OBJS) $(CFLAGS) -o $(TOPDIR)/$(TARGET)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
-
-
 
 all: $(TARGET)
 
