@@ -1,6 +1,33 @@
 #include "include/login.h"
+#include "include/base64.h"
 
-const char *ret_msg[] = {"All ok.", "Password error or other error.", "Auth has been successful.", "Need to configure wlan_ac_name.", "Other error."};
+extern char base64_res[64];
+
+const char *ret_msg[] = {"All ok.", "Password error or ip error or other error.", "Auth has been successful.", "Need to configure wlan_ac_name.", "Other error."};
+const int MAX_HTTP_SIZE = 1024;
+char result[32], ret_code[32], msg[128];
+
+/*
+ * 获取str中的key:"值"
+ * @param str 需要查询的str
+ * @param key 需要查询的key
+ * @param str 结果保存的地方
+ * @return 成功返回1，否则返回0
+ */
+int get_value(char *str, char *key, char *buf) {
+    // 搜索 "result":" 字符串
+    char *start = strstr(str, key);
+    if (start != NULL) {
+        // 移动指针到值的开始位置
+        start += strlen(key);
+        // 使用 sscanf 提取值，直到遇到双引号为止
+        if (sscanf(start, "%[^\"]", buf) == 1) {
+            printf("%s%s\"\n", key, buf);
+            return 1;
+        }
+    }
+    return 0;
+}
 
 /*
  * 登录认证
@@ -17,7 +44,7 @@ enum RET_CODE login(const char *server, const char *port, const char *user_accou
     // 将time_t统一转为%lld
     long long int time_0 = time(NULL);
     long long int time_1 = time(NULL);
-    char request[4096];
+    char request[MAX_HTTP_SIZE];
     snprintf(request, sizeof(request),
              "GET /eportal/?c=Portal&a=login&callback=dr%lld&login_method=1&user_account=%s&user_password=%s&wlan_user_ip=%s&wlan_user_mac=000000000000&wlan_ac_ip=&wlan_ac_name=%s&jsVersion=3.0&_=%lld HTTP/1.1\r\n"
                        "Host: %s:%s\r\n"
@@ -65,7 +92,7 @@ enum RET_CODE login(const char *server, const char *port, const char *user_accou
     }
 
     // 接收并打印服务器响应
-    char response[4096];
+    char response[MAX_HTTP_SIZE];
     ssize_t bytes_received;
     if ((bytes_received = read(sockfd, response, sizeof(response) - 1)) > 0) {
         response[bytes_received] = '\0';
@@ -75,12 +102,15 @@ enum RET_CODE login(const char *server, const char *port, const char *user_accou
     // 关闭套接字
     close(sockfd);
 
-    char *result = get_result(response);
+    get_value(response, "\"result\":\"", result);
     if(!strcasecmp(result, "1") || !strcasecmp(result, "ok")) {
         return OK;
     }
 
-    char *ret_code = get_ret_code(response);
+    get_value(response, "\"ret_code\":\"", ret_code);
+    get_value(response, "\"msg\":\"", msg);
+    base64_decode(msg);
+    printf("msg: %s\n", base64_res);
     if(!strcasecmp(ret_code, "1")) {
         return PASSWORD_ERROR;
     }
@@ -99,6 +129,10 @@ enum RET_CODE login(const char *server, const char *port, const char *user_accou
  * @param ret_code
  * @return
  */
-const char *convert_ret_code(enum RET_CODE ret_code) {
-    return ret_msg[ret_code];
+const char *convert_ret_code(enum RET_CODE retcode) {
+    if(retcode == 0) {
+        return ret_msg[retcode];
+    }
+    snprintf(msg, sizeof(msg), "%s(ret=%s, msg=%s)", ret_msg[retcode], ret_code, base64_res);
+    return msg;
 }

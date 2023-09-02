@@ -10,11 +10,9 @@
 #include <sys/socket.h>
 #include <time.h>
 
-#include "get_result.h"
-
 /*
  * OK认证成功
- * PASSWORD_ERROR密码错误or其他错误
+ * PASSWORD_ERROR密码错误or内网ip错误or其他错误
  * INUSE已经认证过
  * NO_AC_NAME未指定wlan_ac_name
  * ERROR其他错误

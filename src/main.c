@@ -9,7 +9,7 @@
 #include "include/daemond.h"
 #include "include/logging.h"
 
-#define VERSION "0.0.5"
+#define VERSION "0.0.6"
 
 int is_positive_integer(const char *str);
 void print_help(int exval);

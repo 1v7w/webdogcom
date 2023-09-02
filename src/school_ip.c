@@ -20,7 +20,7 @@ int check_network(char ip_str[], char subnet_str[], char netmask_str[]) {
     network.s_addr = ip.s_addr & netmask.s_addr;
 
     // 检查IP地址是否属于特定的网段
-    if ((network.s_addr == (subnet.s_addr & netmask.s_addr))) {
+    if (network.s_addr == (subnet.s_addr & netmask.s_addr)) {
         return 1;
     }
     return 0;
