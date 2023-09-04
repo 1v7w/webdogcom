@@ -21,5 +21,6 @@ enum RET_CODE{OK, PASSWORD_ERROR, INUSE, NO_AC_NAME, ERROR};
 
 enum RET_CODE login(const char *server, const char *port, const char *user_account, const char *user_password, const char *ip, const char *wlan_ac_name);
 const char *convert_ret_code(enum RET_CODE ret_code);
+int curl(const char *server, const char *port, const char *uri, const char *data, int method);
 
 #endif //WEBDOGCOM_LOGIN_H
