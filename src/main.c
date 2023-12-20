@@ -9,7 +9,7 @@
 #include "include/daemond.h"
 #include "include/logging.h"
 
-#define VERSION "0.0.6"
+#define VERSION "0.0.8"
 
 int is_positive_integer(const char *str);
 void print_help(int exval);
@@ -17,18 +17,20 @@ void print_help(int exval);
 int main(int argc, char *argv[]) {
     int interval_time = 60;
     char *filepath = "/etc/webdogcom.conf";
+    int mode = -1;
     char msg[128];
     // 获取参数
     struct option long_options[] = {
             {"interval", required_argument, NULL, 'i'},
             {"conf", required_argument, NULL, 'c'},
+            {"mode", required_argument, NULL, 'm'},
             {"daemon", no_argument, NULL, 'd'},
             {"help", no_argument, 0, 'h'},
             {NULL, 0, NULL, 0}
     };
 
     int opt;
-    while ((opt = getopt_long(argc, argv, "i:c:dh", long_options, NULL)) != -1) {
+    while ((opt = getopt_long(argc, argv, "i:c:m:dh", long_options, NULL)) != -1) {
         switch (opt) {
             case 'i':
                 if(!is_positive_integer(optarg)) {
@@ -40,6 +42,19 @@ int main(int argc, char *argv[]) {
                 break;
             case 'c':
                 filepath = realpath(optarg, NULL);
+                break;
+            case 'm':
+                if (!strcmp(optarg, "get")) {
+                    mode = 0;
+                }
+                else if (!strcmp(optarg, "post")) {
+                    mode = 1;
+                }
+                else {
+                    sprintf(msg, "moode must be specified as get or post!");
+                    fprintf(stderr, "%s\n", msg);
+                    exit(1);
+                }
                 break;
             case 'd':
                 daemon_flag = 1;
@@ -54,6 +69,13 @@ int main(int argc, char *argv[]) {
                 break;
         }
     }
+
+    if (mode == -1) {
+        sprintf(msg, "moode must be specified as get or post!");
+        fprintf(stderr, "%s\n", msg);
+        exit(1);
+    }
+
     // 设置daemon
     if(daemon_flag) {
         daemonise();
@@ -65,24 +87,29 @@ int main(int argc, char *argv[]) {
         logging("read config file failed.");
         exit(1);
     }
-    char *inner_ip = get_school_ip(config->network_segment, config->subnet_mask);
-    if(inner_ip == NULL) {
-        sprintf(msg, "network_segment:%s\n"
-                        "subnet_mask:%s\n"
-                        "cannot find target ip!",
-                config->network_segment, config->subnet_mask);
-        fprintf(stderr, "%s\n", msg);
-        logging(msg);
-        exit(1);
-    }
 
-    sprintf(msg, "ip: %s", inner_ip);
-    puts(msg);
-    logging(msg);
+    char *inner_ip;
+    while (1) {
+        inner_ip = get_school_ip(config->network_segment, config->subnet_mask);
+        if(inner_ip == NULL) {
+            sprintf(msg, "network_segment:%s\n"
+                         "subnet_mask:%s\n"
+                         "cannot find target ip!",
+                    config->network_segment, config->subnet_mask);
+            fprintf(stderr, "%s\n", msg);
+            logging(msg);
+            sleep(interval_time);
+            continue;
+        }
+        sprintf(msg, "ip: %s", inner_ip);
+        puts(msg);
+        logging(msg);
+        break;
+    }
 
     while(1) {
         int ret = login(config->server, config->port, config->user_account, config->user_password,
-                        inner_ip, config->wlan_ac_name);
+                        inner_ip, config->wlan_ac_name, 0);
         sprintf(msg, "logging ret: %s", convert_ret_code(ret));
         puts(msg);
         logging(msg);
@@ -117,6 +144,7 @@ void print_help(int exval) {
     printf("\twebdogcom [options <argument>]...\n\n");
 
     printf("Options:\n");
+    printf("\t--mode <get/post>, -m <get/post>      set your webdogcom mode\n");
     printf("\t--interval <m>, -i <m>                authentication per m(int) seconds\n");
     printf("\t--conf <filepath>, -c <filepath>      import configuration file, default /etc/webdogcom.conf\n");
     printf("\t--daemon, -d                          set daemon flag\n");

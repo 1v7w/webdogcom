@@ -9,6 +9,7 @@ Usage:
         webdogcom [options <argument>]...
 
 Options:
+        --mode <get/post>, -m <get/post>      set your webdogcom mode
         --interval <m>, -i <m>                authentication per m(int) seconds
         --conf <filepath>, -c <filepath>      import configuration file, default /etc/webdogcom.conf
         --daemon, -d                          set daemon flag
@@ -17,8 +18,9 @@ Options:
 
 ### Example:
 ```shell
-$ webdogcom -d
-$ webdogcom -d -i 600 # per 10 minutes to auth
+$ webdogcom -m get
+$ webdogcom -m get -c /etc/webdogcom.conf
+$ webdogcom -m get -d -i 600 # per 10 minutes to auth
 ```
 
 ### To build:
